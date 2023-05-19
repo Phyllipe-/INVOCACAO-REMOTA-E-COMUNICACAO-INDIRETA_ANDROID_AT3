@@ -5,40 +5,37 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.Socket;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
 public class CalculadoraHttpPOST extends AsyncTask<Void, Void, String> {
 
-    TextView tv;
-    String oper1,oper2;
-    PrecisaCalcular pc;
-    public CalculadoraHttpPOST(TextView tv, String oper1, String oper2){
-        this.tv=tv;
-        this.oper1=oper1;
-        this.oper2=oper2;
+    TextView textView;
+    String numeroA, numeroB, operacao;
+    PrecisaCalcular calcular;
+    public CalculadoraHttpPOST(TextView textViewActivity, String numeroA,
+                               String numeroB){
+        this.textView = textViewActivity;
+        this.numeroA = numeroA;
+        this.numeroB = numeroB;
 
     }
-    public CalculadoraHttpPOST(PrecisaCalcular pc, String oper1, String oper2){
-        this.tv=tv;
-        this.oper1=oper1;
-        this.oper2=oper2;
-        this.pc=pc;
+    public CalculadoraHttpPOST(PrecisaCalcular calcular, String numeroA, String numeroB, String operacao){
+        this.textView = textView;
+        this.numeroA = numeroA;
+        this.numeroB = numeroB;
+        this.calcular = calcular;
+        this.operacao = operacao;
 
     }
     @Override
     protected String doInBackground(Void... voids) {
-        String result="";
+        String resultado="";
         try {
 
            URL url = new URL("https://double-nirvana-273602.appspot.com/?hl=pt-BR");
@@ -53,7 +50,8 @@ public class CalculadoraHttpPOST extends AsyncTask<Void, Void, String> {
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
-            writer.write("oper1="+oper1+"&oper2="+oper2+"&operacao=1");
+
+            writer.write("oper1="+ numeroA +"&oper2="+ numeroB +"&operacao="+operacao);
             writer.flush();
             writer.close();
             os.close();
@@ -71,14 +69,14 @@ public class CalculadoraHttpPOST extends AsyncTask<Void, Void, String> {
                 while ((responseLine = br.readLine()) != null) {
                     response.append(responseLine.trim());
                 }
-                result = response.toString();
+                resultado = response.toString();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
-        return result;
+        return resultado;
         //Codigo
     }
 
@@ -90,12 +88,12 @@ public class CalculadoraHttpPOST extends AsyncTask<Void, Void, String> {
 
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(String resultado) {
         //Codigo
-        if(this.tv!=null) {
-            this.tv.setText(result);
+        if(this.textView !=null) {
+            this.textView.setText(resultado);
         }else {
-            this.pc.result_calculoRemoto(result);
+            this.calcular.result_calculoRemoto(resultado);
         }
     }
 
